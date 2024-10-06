@@ -1,21 +1,21 @@
+// src/components/Catalog.jsx
 import React from "react";
 
 const Catalog = ({ courses }) => (
-  <div>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
     {Object.entries(courses).map(([courseID, course]) => (
-      <div key={courseID}>
-        <h2>Course ID: {courseID}</h2>
-        <p>Title: {course.title}</p>
-        <p>Term: {course.term}</p>
-        <p>Number: {course.number}</p>
-        <p>Meets: {course.meets}</p>
+      <div key={courseID} className="bg-white p-4 rounded-lg shadow">
+        <h2 className="text-xl font-semibold text-blue-600">Course ID: {courseID}</h2>
+        <p className="mt-2"><span className="font-medium">Title:</span> {course.title}</p>
+        <p><span className="font-medium">Term:</span> {course.term}</p>
+        <p><span className="font-medium">Number:</span> {course.number}</p>
+        <p><span className="font-medium">Meets:</span> {course.meets}</p>
       </div>
     ))}
   </div>
 );
 
 export default Catalog;
-
 
 
 // courses: {

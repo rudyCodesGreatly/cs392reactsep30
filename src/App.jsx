@@ -1,8 +1,7 @@
-import { useState } from "react";
-import logo from "./logo.svg";
+// src/App.jsx
+import React from "react";
 import Banner from "./components/Banner.jsx";
 import Catalog from "./components/Catalog.jsx";
-import "./App.css";
 
 const schedule = {
   title: "CS Courses for 2018-2019",
@@ -35,9 +34,9 @@ const schedule = {
 };
 
 const App = () => (
-  <div>
-    <Banner title = {schedule.title}/>
-    <Catalog courses = {schedule.courses}/>
+  <div className="min-h-screen bg-red-100 p-4">
+    <Banner title={schedule.title} />
+    <Catalog courses={schedule.courses} />
   </div>
 );
 
