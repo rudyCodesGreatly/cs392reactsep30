@@ -1,7 +1,9 @@
 // src/App.jsx
 import React from "react";
+import { useState, useEffect } from "react";
 import Banner from "./components/Banner.jsx";
 import Catalog from "./components/Catalog.jsx";
+
 
 const schedule = {
   title: "CS Courses for 2018-2019",
@@ -33,11 +35,27 @@ const schedule = {
   },
 };
 
-const App = () => (
-  <div className="min-h-screen bg-red-100 p-4">
-    <Banner title={schedule.title} />
-    <Catalog courses={schedule.courses} />
-  </div>
-);
+
+
+
+const App = () => {
+
+  const [isDark, setDark] = useState(false);
+  
+  return (
+
+    <div className={`min-h-screen p-4 ${isDark ? 'bg-gray-200' : 'bg-blue-100'}`}>
+
+
+      <div className="flex justify-end mr-4">
+        <button className="p-2 text-white bg-red-500" onClick={()=>setDark(!isDark)}>Change Color</button>
+      </div>
+    
+      <Banner title={schedule.title} />
+      <Catalog courses={schedule.courses} />
+
+    </div>
+
+)};
 
 export default App;

@@ -1,21 +1,59 @@
-// src/components/Catalog.jsx
 import React from "react";
+import { useQuery } from '@tanstack/react-query';
 
-const Catalog = ({ courses }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {Object.entries(courses).map(([courseID, course]) => (
-      <div key={courseID} className="bg-white p-4 rounded-lg shadow">
-        <h2 className="text-xl font-semibold text-blue-600">Course ID: {courseID}</h2>
-        <p className="mt-2"><span className="font-medium">Title:</span> {course.title}</p>
-        <p><span className="font-medium">Term:</span> {course.term}</p>
-        <p><span className="font-medium">Number:</span> {course.number}</p>
-        <p><span className="font-medium">Meets:</span> {course.meets}</p>
-      </div>
-    ))}
-  </div>
-);
+const fetchJson = async (url) => {
+  const response = await fetch(url);
+  if (!response.ok) throw response;
+  return response.json();
+};
+
+export const useJsonQuery = (url) => {
+  const { data, isLoading, error } = useQuery({
+    queryKey: [url],
+    queryFn: () => fetchJson(url)
+  });
+
+  return [ data, isLoading, error ];
+};
+
+
+const Catalog = ({ courses }) => {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+      {Object.entries(courses).map(([courseID, course]) => (
+        <div
+          key={courseID}
+          className="bg-white p-4 h-full rounded-lg shadow mx-auto w-full flex flex-col justify-between"
+        >
+        
+          <div>
+            <h2 className="text-xl font-semibold text-blue-600">
+              {" "}
+              {course.term} {courseID}
+            </h2>
+            <p className="mt-2">
+              <span className="text-large font-semibold"></span> {course.title}
+            </p>
+          </div>
+
+          <div>
+            <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"></hr>
+            <p>
+              <span className="font-medium"></span> {course.meets}
+            </p>
+          </div>
+
+        </div>
+      ))}
+    </div>
+  );
+};
 
 export default Catalog;
+
+
+
+
 
 
 // courses: {
