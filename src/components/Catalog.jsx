@@ -1,9 +1,15 @@
 import React from 'react';
 
-const Catalog = ({ courses }) => {
+const Catalog = ({ courses, state_of_season}) => {
+
+  const filteredCourses = Object.entries(courses).filter(
+      ([id, course]) => course.term.toLowerCase() === state_of_season.toLowerCase()
+  );
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-      {Object.entries(courses).map(([courseID, course]) => (
+
+      {filteredCourses.map(([courseID, course]) => (
         <div
           key={courseID}
           className="bg-white p-4 h-full rounded-lg shadow mx-auto w-full flex flex-col justify-between"
