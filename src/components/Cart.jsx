@@ -1,26 +1,24 @@
-import React from "react";
+// components/Cart.jsx
+import React from 'react';
 
-const Cart = ({isShopping, setIsShopping, viewingCart, setViewingCart}) =>{
+const Cart = ({ isShopping, setIsShopping, showCartModal, setShowCartModal }) => {
     return (
-        <div className="flex ">
-
+        <div className="flex space-x-2">
             <button
-                    onClick={() => setIsShopping(!isShopping)}
-                    className="bg-amber-200 border-2 border-black px-2 py-1  cursor-pointer hover:bg-gray-200">
-                {isShopping ? 'Exit Course Selection' : 'Edit Cart'}
-            </button>
-
-            <button
-                    onClick={() => setViewingCart(!viewingCart)}
-                    className="bg-white border-2 border-black px-2 py-1 cursor-pointer hover:bg-gray-200"
+                onClick={() => setIsShopping(!isShopping)}
+                className="bg-amber-200 border-2 border-black px-2 py-1 cursor-pointer hover:bg-gray-200"
             >
-                {viewingCart ? 'View All Courses' : 'View Cart'}
+                {isShopping ? 'Exit Course Selection' : 'Add Courses to Cart'}
             </button>
 
-
+            <button
+                onClick={() => setShowCartModal(true)}
+                className="bg-white border-2 border-black px-2 py-1 cursor-pointer hover:bg-gray-200"
+            >
+                View Cart
+            </button>
         </div>
-    )
-}
+    );
+};
 
 export default Cart;
-
