@@ -1,5 +1,6 @@
-// components/CourseCard.jsx
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaEdit } from "react-icons/fa";
 
 const CourseCard = ({
                         courseID,
@@ -9,6 +10,13 @@ const CourseCard = ({
                         toggleCourseSelection,
                         viewingCart,
                     }) => {
+
+    const navigate = useNavigate();
+
+    const openEditor = () => {
+        navigate(`/edit/${courseID}`);
+    };
+
     return (
         <div
             key={courseID}
@@ -46,9 +54,18 @@ const CourseCard = ({
                 </h2>
                 <p className="mt-2">{course.title}</p>
             </div>
-            <div>
-                <hr className="h-px my-8 bg-gray-200 border-0" />
-                <p>{course.meets}</p>
+
+            <div className="flex flex-row items-center justify-between mt-4">
+                <p className="mr-4">{course.meets}</p>
+                <button
+                    className="bg-white px-2 py-1 cursor-pointer hover:bg-gray-200"
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        openEditor();
+                    }}
+                >
+                    <FaEdit />
+                </button>
             </div>
         </div>
     );
