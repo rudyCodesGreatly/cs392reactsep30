@@ -1,16 +1,12 @@
 export function conflict(coursesInCart, newCourse) {
-    // Filter courses in the same quarter/term as the new course
     const sameQuarterCourses = filterByQuarter(coursesInCart, newCourse.term);
 
-    // Convert the courses in the cart to time tuples
     const arrayOfTimeConvertedCourseTuples = sameQuarterCourses.map((course) =>
         makeCourseObjectIntoTimeTuple(course)
     );
 
-    // Get the time tuples for the new course
     const newCourseTimesRepresentedAsTuples = makeCourseObjectIntoTimeTuple(newCourse);
 
-    // Check for conflicts
     for (const courseTimeTuples of arrayOfTimeConvertedCourseTuples) {
         for (const cartTimeTuple of courseTimeTuples) {
             for (const newTimeTuple of newCourseTimesRepresentedAsTuples) {
@@ -21,7 +17,7 @@ export function conflict(coursesInCart, newCourse) {
         }
     }
 
-    return false; // No conflicts found
+    return false;
 }
 
 function timesOverlap(tuple1, tuple2) {
@@ -49,7 +45,6 @@ function makeCourseObjectIntoTimeTuple(course) {
         'Su': 144
     };
 
-    // Helper function to extract days from the 'meets' string
     function extractDays(meets) {
         const dayAbbreviations = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
         const days = [];
@@ -67,28 +62,26 @@ function makeCourseObjectIntoTimeTuple(course) {
                 }
             }
             if (!matched) {
-                // Break to avoid infinite loop if no day abbreviation matches
+
                 break;
             }
         }
         return days;
     }
 
-    // Helper function to convert time strings to hour fractions
     function timeStringToHours(timeStr) {
         const [hours, minutes] = timeStr.split(':').map(Number);
         return hours + minutes / 60;
     }
 
-    // Begin parsing the course 'meets' string
     const meets = course.meets;
     if (!meets) {
-        return []; // Return empty array if no 'meets' information
+        return [];
     }
 
     const [daysPart, timesPart] = meets.split(' ');
     if (!timesPart) {
-        return []; // Return empty array if times are missing
+        return [];
     }
 
     const days = extractDays(meets);
@@ -102,7 +95,7 @@ function makeCourseObjectIntoTimeTuple(course) {
     for (const day of days) {
         const dayOffset = dayOffsets[day];
         if (dayOffset === undefined) {
-            continue; // Skip if day abbreviation is unrecognized
+            continue;
         }
         const absoluteStartTime = dayOffset + startTime;
         const absoluteEndTime = dayOffset + endTime;

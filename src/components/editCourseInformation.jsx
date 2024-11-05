@@ -1,15 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { validateTitle, validateMeets } from '../utilities/formValidator';
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db, auth } from "../utilities/firebaseConfig.js";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Editor = ({ courses, updateCourse }) => {
-    const { courseID } = useParams(); // Get courseID from the URL
+    const { courseID } = useParams();
     const navigate = useNavigate();
 
-    // Get the course data by courseID from the courses prop
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userRef);
+
+                if (userDoc.exists() && userDoc.data().roles === "admin") {
+                    setIsAuthenticated(true);
+                    setIsAdmin(true);
+                } else {
+                    alert("You do not have permission to edit this course.");
+                    navigate('/');
+                }
+            } else {
+                navigate('/');
+            }
+        });
+
+        return () => unsubscribe();
+    }, [navigate]);
+
     const course = courses[courseID];
 
-    // State to store the form values, pre-filled with existing course data
     const [formValues, setFormValues] = useState({
         term: '',
         number: '',
@@ -17,13 +42,11 @@ const Editor = ({ courses, updateCourse }) => {
         meets: ''
     });
 
-    // State to store validation errors
     const [errors, setErrors] = useState({
         title: '',
         meets: ''
     });
 
-    // Pre-fill the form values when the course data is available
     useEffect(() => {
         if (course) {
             setFormValues({
@@ -35,17 +58,13 @@ const Editor = ({ courses, updateCourse }) => {
         }
     }, [course]);
 
-    // Handle form input change and validate fields
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-
-        // Update form values
         setFormValues({
             ...formValues,
             [name]: value
         });
 
-        // Validate the input value using the utilities
         let error = '';
         if (name === 'title') {
             error = validateTitle(value);
@@ -53,27 +72,33 @@ const Editor = ({ courses, updateCourse }) => {
             error = validateMeets(value);
         }
 
-        // Set the error state accordingly
         setErrors((prevErrors) => ({
             ...prevErrors,
             [name]: error
         }));
     };
 
-    // Handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Check if there are any errors
         if (errors.title || errors.meets) {
             alert('Please fix the form errors before submitting.');
             return;
         }
 
-        // Update the course information and navigate back to the catalog
-        updateCourse({ ...formValues, id: courseID });
-        navigate('/');
+        const courseRef = doc(db, "courses", courseID);
+
+        try {
+            await updateDoc(courseRef, formValues);
+            updateCourse({ ...formValues, id: courseID });
+            navigate('/');
+        } catch (error) {
+            console.error("Error updating course: ", error);
+            alert("Failed to update the course. Please try again.");
+        }
     };
+
+    if (!isAuthenticated || !isAdmin) return null;
 
     return (
         <div className="p-4 bg-white rounded-lg shadow mx-auto w-full max-w-lg">

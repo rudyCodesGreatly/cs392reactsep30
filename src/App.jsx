@@ -2,36 +2,48 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Banner from './components/Banner.jsx';
 import Catalog from './components/Catalog.jsx';
-import { useJsonQuery } from './utilities/fetch';
 import Selector from './components/termSelector.jsx';
 import Cart from './components/Cart.jsx';
 import CartModal from './components/CartModal.jsx';
 import Editor from "./components/editCourseInformation.jsx";
+import Auth from "./components/Auth.jsx"; // Import the Auth component
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "./utilities/firebaseConfig.js";
 
 const App = () => {
     const [season, setSeason] = useState('Fall');
     const [isShopping, setIsShopping] = useState(false);
     const [showCartModal, setShowCartModal] = useState(false);
     const [selectedCourses, setSelectedCourses] = useState([]);
-    const [courses, setCourses] = useState({}); // Initialize with an empty object
+    const [courses, setCourses] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Fetch data
-    const [data, isLoading, error] = useJsonQuery(
-        'https://courses.cs.northwestern.edu/394/guides/data/cs-courses.php'
-    );
-
-    // Effect to set the courses state once data is available
     useEffect(() => {
-        if (data && data.courses) {
-            setCourses(data.courses);
-        }
-    }, [data]);
+        const fetchCourses = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, "courses"));
+                const coursesData = {};
 
-    // Handle loading or error state
+                querySnapshot.forEach((doc) => {
+                    coursesData[doc.id] = doc.data();
+                });
+
+                setCourses(coursesData);
+                setIsLoading(false);
+            } catch (err) {
+                console.error("Error fetching courses: ", err);
+                setError(err);
+                setIsLoading(false);
+            }
+        };
+
+        fetchCourses();
+    }, []);
+
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error loading data: {error.message}</div>;
 
-    // Courses in cart are basically just the selected courses but displayed as objects rather than course IDs
     const coursesInCart = Object.entries(courses).filter(([courseID]) =>
         selectedCourses.includes(courseID)
     );
@@ -45,13 +57,13 @@ const App = () => {
 
     return (
         <div className="min-h-screen p-4 bg-blue-100">
+            <Auth /> {/* Add Auth component here */}
             <Routes>
                 <Route
                     path="/"
                     element={
                         <div>
-                            {/* Beginning of the course catalog page */}
-                            {data.title && <Banner title={data.title} />}
+                            <Banner title="Course Catalog" />
                             <div className="flex justify-between items-center">
                                 <Cart
                                     isShopping={isShopping}
@@ -62,7 +74,6 @@ const App = () => {
                                 <Selector state_of_season={season} setSeason={setSeason} />
                             </div>
 
-                            {/* Catalog */}
                             <Catalog
                                 courses={courses}
                                 state_of_season={season}
@@ -71,7 +82,6 @@ const App = () => {
                                 setSelectedCourses={setSelectedCourses}
                             />
 
-                            {/* Cart Modal */}
                             <CartModal
                                 isOpen={showCartModal}
                                 onRequestClose={() => setShowCartModal(false)}
@@ -79,7 +89,6 @@ const App = () => {
                                 selectedCourses={selectedCourses}
                                 setSelectedCourses={setSelectedCourses}
                             />
-                            {/* End of the course catalog page */}
                         </div>
                     }
                 />

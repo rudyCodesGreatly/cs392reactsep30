@@ -1,4 +1,3 @@
-// components/CartModal.jsx
 import React from 'react';
 import Modal from 'react-modal';
 import CourseCard from './CourseCard';
@@ -9,7 +8,7 @@ const CartModal = ({
                        selectedCourses,
                        setSelectedCourses,
                    }) => {
-    // Function to remove a course from the cart
+
     const removeCourse = (courseID) => {
         setSelectedCourses(selectedCourses.filter((id) => id !== courseID));
     };
@@ -23,7 +22,6 @@ const CartModal = ({
             onRequestClose={onRequestClose}
             contentLabel="Cart Modal"
             className="relative flex items-center justify-center min-h-screen"
-            // overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-50"
         >
             <div className="absolute bg-white px-6 pb-6 rounded-lg shadow-lg w-full max-w-lg max-h-[80vh] overflow-y-auto">
 
@@ -50,9 +48,9 @@ const CartModal = ({
                                 key={courseID}
                                 courseID={courseID}
                                 course={course}
-                                isSelected={true} // All courses in cart are selected
+                                isSelected={true}
                                 isShopping={isShopping}
-                                toggleCourseSelection={removeCourse} // Use remove function
+                                toggleCourseSelection={removeCourse}
                                 viewingCart={viewingCart}
                             />
                         ))}

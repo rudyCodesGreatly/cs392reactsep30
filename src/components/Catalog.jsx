@@ -9,7 +9,6 @@ const Catalog = ({
                      selectedCourses,
                      setSelectedCourses,
                  }) => {
-    // Filter courses based on the term
 
     const filteredCourses = Object.entries(courses).filter(
         ([id, course]) => course.term.toLowerCase() === state_of_season.toLowerCase()
@@ -29,10 +28,10 @@ const Catalog = ({
 
             // Check for conflicts
             if (!conflict(selectedCourseObjects, newCourse)) {
-                // No conflict, add the course
+                // No conflict add the course
                 setSelectedCourses([...selectedCourses, courseID]);
             } else {
-                // Conflict detected, alert the user
+                // Conflict detected alert the user
                 alert('Course cannot be added due to a scheduling conflict.');
             }
         }

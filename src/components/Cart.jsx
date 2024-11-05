@@ -1,4 +1,3 @@
-// components/Cart.jsx
 import React from 'react';
 
 const Cart = ({ isShopping, setIsShopping, showCartModal, setShowCartModal }) => {
